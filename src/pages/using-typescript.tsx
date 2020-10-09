@@ -20,6 +20,7 @@ const UsingTypescript: React.FC<PageProps<DataProps>> = ({ data, path }) => (
     <p>You're currently on the page "{path}" which was built on {data.site.buildTime}.</p>
     <p>To learn more, head over to our <a href="https://www.gatsbyjs.com/docs/typescript/">documentation about TypeScript</a>.</p>
     <Link to="/">Go back to the homepage</Link>
+    <Link to="/page-2/">Go to page 2</Link> <br />
   </Layout>
 )
 
