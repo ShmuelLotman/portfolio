@@ -35,10 +35,6 @@ class CodeSandbox extends Component {
         });
     }
 
-    // componentDidUpdate() {
-    //     this.runCode();
-    // }
-
     componentDidMount() {
         this.setState({
             id: pushid(),
@@ -52,33 +48,42 @@ class CodeSandbox extends Component {
             .post("http://localhost:1337/update-editor", data)
             .catch(console.error);
     };
-    runCode = (e) => {
+    runCode = async (e) => {
+        console.log('here')
         e.preventDefault()
         const { js } = this.state;
-        console.log(js)
-        const iframe = this.refs.iframe;
-        const document = iframe.contentDocument;
-        const documentContents = `
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <title>Document</title>
-          </head>
-          <body>
 
-            <script type="text/javascript">
-              ${js}
-            </script>
-          </body>
-          </html>
-        `;
+        try {
+            let executed = await axios.post('http://localhost:1337/run', { code: js, language: 'Javascript' }).catch(console.error)
 
-        document.open();
-        document.write(documentContents);
-        document.close();
+            console.log(executed)
+        } catch (err) {
+            console.log('hello error')
+        }
+
+        // const iframe = this.refs.iframe;
+        // const document = iframe.contentDocument;
+        // const documentContents = `
+        //   <!DOCTYPE html>
+        //   <html lang="en">
+        //   <head>
+        //     <meta charset="UTF-8">
+        //     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        //     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        //     <title>Document</title>
+        //   </head>
+        //   <body>
+
+        //     <script type="text/javascript">
+        //       ${js}
+        //     </script>
+        //   </body>
+        //   </html>
+        // `;
+
+        // document.open();
+        // document.write(documentContents);
+        // document.close();
     };
 
     render() {
@@ -91,10 +96,11 @@ class CodeSandbox extends Component {
         };
 
         return (
-            <div className="App">
-                <section className="playground">
+            <div className="App" style={{ display: 'flex', width: '100vw', height: '70vh' }}>
 
-                    <div className="code-editor js-code">
+                <section style={{ width: '100%', height: '100%' }} className="playground">
+
+                    <div style={{ width: '100%', height: '100%' }} className="code-editor js-code">
                         <div className="editor-header">JavaScript</div>
                         <CodeMirror
                             value={js}
@@ -106,12 +112,14 @@ class CodeSandbox extends Component {
                                 this.setState({ js }, () => this.syncUpdates()); // update this line
                             }}
                         />
+                        <button onClick={(e) => this.runCode(e)}>Run This</button>
                     </div>
-                    <button onClick={(e) => this.runCode(e)}>Run</button>
+
                 </section>
-                <section className="result">
+
+                {/* <section className="result">
                     <iframe title="result" className="iframe" ref="iframe" />
-                </section>
+                </section> */}
             </div>
         );
     }
